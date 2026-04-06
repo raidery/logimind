@@ -8,17 +8,28 @@
 
 ### 安装
 
+**方式一：一键安装（推荐）**
+
+在 OpenClaw 或 Claude Code 中直接说：
+
+```
+请帮我从 https://github.com/raidery/logimind 安装第二大脑技能
+```
+
+**方式二：手动安装**
+
 ```bash
 # 克隆到 skills 目录
 git clone git@github.com:raidery/logimind.git ~/.agents/skills/logimind
+
+# 注入到 MEMORY.md（让 AI 知道 LogiMind 在哪）
+~/.agents/skills/logimind/install.sh --inject-only
 
 # 初始化 vault（如果还没有）
 mkdir -p ~/documents/second-brain/{raw/{articles,podcasts,tweets,voice,images,files,chats},wiki/{summaries,concepts,indexes,projects,areas,resources,archives},outputs/{qa,health}}
 
 # 在 Obsidian 中打开 ~/documents/second-brain/ vault
 ```
-
-Skill 已安装到 `~/.agents/skills/logimind/`。
 
 Vault 位于 `~/documents/second-brain/`，Obsidian 直接打开即可浏览。
 
