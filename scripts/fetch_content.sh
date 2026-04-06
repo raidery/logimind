@@ -46,9 +46,11 @@ detect_platform() {
 # Twitter/X — Jina Reader
 #-------------------------------------------------------------------------------
 fetch_twitter() {
-    local jina_url="https://r.jina.ai/${URL}"
     echo "Fetching Twitter/X via Jina Reader..." >&2
-    curl -s --fail --max-time 30 "$jina_url"
+    local encoded_url
+    encoded_url="$(python3 -c "import urllib.parse; print(urllib.parse.quote('$URL', safe=''))" 2>/dev/null || echo "$URL")"
+    local jina_url="https://r.jina.ai/${encoded_url}"
+    fetch_with_proxy "$jina_url" 30
 }
 
 #-------------------------------------------------------------------------------
@@ -94,18 +96,34 @@ fetch_bilibili() {
 }
 
 #-------------------------------------------------------------------------------
-# 微信公众号 / 小红书 — agent-reach 或 Jina Reader
+# 检测是否有可用代理
+#-------------------------------------------------------------------------------
+fetch_with_proxy() {
+    local fetch_url="$1"
+    local max_time="${2:-30}"
+
+    # 优先走 Clash 代理（Jina Reader 在国内被墙）
+    if curl -s --max-time 5 --proxy http://127.0.0.1:7890 "https://r.jina.ai/" >/dev/null 2>&1; then
+        curl -s --fail --max-time "$max_time" --proxy http://127.0.0.1:7890 "$fetch_url"
+    else
+        # 无代理或代理不通，尝试直连
+        curl -s --fail --max-time "$max_time" "$fetch_url"
+    fi
+}
+
+#-------------------------------------------------------------------------------
+# 微信公众号 / 小红书
+# ⚠️ WeChat 要求登录认证，直接抓取只能获取页面壳，非登录态请直接复制正文粘贴
 #-------------------------------------------------------------------------------
 fetch_wechat_or_xiaohongshu() {
-    echo "Fetching via agent-reach (or Jina Reader fallback)..." >&2
+    echo "Fetching via Jina Reader (proxy fallback)..." >&2
 
-    if command -v agent-reach &>/dev/null; then
-        agent-reach --read "$URL"
-    else
-        # Fallback to Jina Reader
-        local jina_url="https://r.jina.ai/${URL}"
-        curl -s --fail --max-time 30 "$jina_url"
-    fi
+    # Jina Reader 需要完整 URL 编码
+    local encoded_url
+    encoded_url="$(python3 -c "import urllib.parse; print(urllib.parse.quote('$URL', safe=''))" 2>/dev/null || echo "$URL")"
+    local jina_url="https://r.jina.ai/${encoded_url}"
+
+    fetch_with_proxy "$jina_url" 30
 }
 
 #-------------------------------------------------------------------------------
@@ -113,8 +131,11 @@ fetch_wechat_or_xiaohongshu() {
 #-------------------------------------------------------------------------------
 fetch_generic() {
     echo "Fetching via Jina Reader..." >&2
-    local jina_url="https://r.jina.ai/${URL}"
-    curl -s --fail --max-time 30 "$jina_url"
+    local encoded_url
+    encoded_url="$(python3 -c "import urllib.parse; print(urllib.parse.quote('$URL', safe=''))" 2>/dev/null || echo "$URL")"
+    local jina_url="https://r.jina.ai/${encoded_url}"
+
+    fetch_with_proxy "$jina_url" 30
 }
 
 #-------------------------------------------------------------------------------

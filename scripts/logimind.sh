@@ -26,6 +26,11 @@ LogiMind — LLM Wiki 知识管理系统
 命令:
   ingest <URL> [type]  抓取 URL 到 raw/
                            type: article | podcast | tweet (auto-detected)
+                           ⚠️ WeChat/微信公众号需登录，请用 ingest-text 粘贴正文
+  ingest-text <file>   摄入本地文件或粘贴内容到 raw/
+                           用途: WeChat 文章无法直接抓取时代替方案
+                           用法: cat article.md | logimind ingest-text
+                                 logimind ingest-text /path/to/file.md
   compile [file]        编译 raw/ 内容到 wiki/summaries/ + PARA 分类
                            不指定 file 则扫描所有未编译文件
   lint [--fix] [quick|full]
@@ -38,6 +43,8 @@ LogiMind — LLM Wiki 知识管理系统
 示例:
   logimind ingest https://example.com/article
   logimind ingest https://twitter.com/user/status/123 tweet
+  logimind ingest-text ~/Downloads/article.md  # 本地文件
+  cat article.md | logimind ingest-text        # 管道输入（粘贴内容）
   logimind compile
   logimind compile raw/articles/2026-04-06-my-article.md
   logimind lint
@@ -66,6 +73,9 @@ main() {
     case "$cmd" in
         ingest)
             "$SCRIPT_DIR/ingest.sh" "$@"
+            ;;
+        ingest-text)
+            "$SCRIPT_DIR/ingest_text.sh" "$@"
             ;;
         compile)
             "$SCRIPT_DIR/compile.sh" "$@"
