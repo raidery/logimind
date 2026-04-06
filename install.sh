@@ -26,26 +26,30 @@ if [ "$1" = "--inject-only" ]; then
             return 0
         fi
 
-        INJECT_CONTENT="
+        # shellcheck disable=SC2016
+        INJECT_CONTENT='
 ---
 
 ## 🧠 LogiMind — 第二大脑技能
 
-**Skill 路径：** \`$PROJECT_DIR/\`
+**Skill 路径：** `$PROJECT_DIR/`
 
 当需要知识积累、内容收藏时，使用 LogiMind 第二大脑系统。
 
-**重要：** 处理前先读取 \`\$PROJECT_DIR/CLAUDE.md\`（定义完整处理流程）
+**重要：** 处理前先读取 `$PROJECT_DIR/CLAUDE.md`（定义完整处理流程）
 
 **使用场景：**
-- 文章/链接摄入 → \`@logimind ingest <url>\`
-- 内容编译 → \`@logimind compile\`
-- 健康检查 → \`@logimind lint\`
-- 知识问答 → \`@logimind query <问题>\`
+- 文章/链接摄入 → `@logimind ingest <url>`
+- 内容编译 → `@logimind compile`
+- 健康检查 → `@logimind lint`
+- 知识问答 → `@logimind query <问题>`
 
 **用法：** 直接把内容或链接发给 AI，说"存入第二大脑"或"@logimind ingest <链接>"。
 
-"
+'
+
+        # 替换占位符
+        INJECT_CONTENT="${INJECT_CONTENT//\$PROJECT_DIR/$PROJECT_DIR}"
 
         if grep -q "LogiMind.*第二大脑技能" "$OPENCLAW_MEMORY" 2>/dev/null; then
             echo "发现已有 LogiMind 注入，更新..."
