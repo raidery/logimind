@@ -8,6 +8,16 @@
 
 ### 安装
 
+```bash
+# 克隆到 skills 目录
+git clone git@github.com:raidery/logimind.git ~/.agents/skills/logimind
+
+# 初始化 vault（如果还没有）
+mkdir -p ~/documents/second-brain/{raw/{articles,podcasts,tweets,voice,images,files,chats},wiki/{summaries,concepts,indexes,projects,areas,resources,archives},outputs/{qa,health}}
+
+# 在 Obsidian 中打开 ~/documents/second-brain/ vault
+```
+
 Skill 已安装到 `~/.agents/skills/logimind/`。
 
 Vault 位于 `~/documents/second-brain/`，Obsidian 直接打开即可浏览。
